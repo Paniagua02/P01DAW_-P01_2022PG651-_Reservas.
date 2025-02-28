@@ -1,0 +1,105 @@
+USE [reservasdb]
+GO
+/****** Object:  Table [dbo].[__EFMigrationsHistory]    Script Date: 27/2/2025 20:45:06 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[__EFMigrationsHistory](
+	[MigrationId] [nvarchar](150) NOT NULL,
+	[ProductVersion] [nvarchar](32) NOT NULL,
+ CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY CLUSTERED 
+(
+	[MigrationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[EspaciosParqueo]    Script Date: 27/2/2025 20:45:06 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[EspaciosParqueo](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Numero] [int] NOT NULL,
+	[Ubicacion] [nvarchar](50) NOT NULL,
+	[CostoPorHora] [decimal](10, 2) NOT NULL,
+	[Disponible] [bit] NOT NULL,
+	[SucursalId] [int] NOT NULL,
+ CONSTRAINT [PK_EspaciosParqueo] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Reservas]    Script Date: 27/2/2025 20:45:06 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Reservas](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[UsuarioId] [int] NOT NULL,
+	[EspacioParqueoId] [int] NOT NULL,
+	[FechaReserva] [datetime2](7) NOT NULL,
+	[CantidadHoras] [int] NOT NULL,
+ CONSTRAINT [PK_Reservas] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Sucursales]    Script Date: 27/2/2025 20:45:06 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Sucursales](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [nvarchar](100) NOT NULL,
+	[Direccion] [nvarchar](200) NOT NULL,
+	[Telefono] [nvarchar](15) NOT NULL,
+	[Administrador] [nvarchar](max) NOT NULL,
+	[NumeroEspacios] [int] NOT NULL,
+ CONSTRAINT [PK_Sucursales] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Usuarios]    Script Date: 27/2/2025 20:45:06 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Usuarios](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [nvarchar](100) NOT NULL,
+	[Correo] [nvarchar](100) NOT NULL,
+	[Telefono] [nvarchar](15) NOT NULL,
+	[Clave] [nvarchar](max) NOT NULL,
+	[Rol] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_Usuarios] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[EspaciosParqueo]  WITH CHECK ADD  CONSTRAINT [FK_EspaciosParqueo_Sucursales_SucursalId] FOREIGN KEY([SucursalId])
+REFERENCES [dbo].[Sucursales] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[EspaciosParqueo] CHECK CONSTRAINT [FK_EspaciosParqueo_Sucursales_SucursalId]
+GO
+ALTER TABLE [dbo].[Reservas]  WITH CHECK ADD  CONSTRAINT [FK_Reservas_EspaciosParqueo_EspacioParqueoId] FOREIGN KEY([EspacioParqueoId])
+REFERENCES [dbo].[EspaciosParqueo] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Reservas] CHECK CONSTRAINT [FK_Reservas_EspaciosParqueo_EspacioParqueoId]
+GO
+ALTER TABLE [dbo].[Reservas]  WITH CHECK ADD  CONSTRAINT [FK_Reservas_Usuarios_UsuarioId] FOREIGN KEY([UsuarioId])
+REFERENCES [dbo].[Usuarios] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Reservas] CHECK CONSTRAINT [FK_Reservas_Usuarios_UsuarioId]
+GO
